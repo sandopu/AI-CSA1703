@@ -1,0 +1,73 @@
+import heapq
+
+class Node:
+    def __init__(self, state, parent=None, cost=0, heuristic=0):
+        self.state = state
+        self.parent = parent
+        self.cost = cost
+        self.heuristic = heuristic
+
+    def __lt__(self, other):
+        return (self.cost + self.heuristic) < (other.cost + other.heuristic)
+
+def astar(graph, start, goal):
+    open_list = [Node(start, None, 0, heuristic(start, goal))]
+    closed_list = set()
+
+    while open_list:
+        current_node = heapq.heappop(open_list)
+
+        if current_node.state == goal:
+            return reconstruct_path(current_node)
+
+        closed_list.add(current_node.state)
+
+        for neighbor, cost in graph[current_node.state]:
+            if neighbor in closed_list:
+                continue
+
+            total_cost = current_node.cost + cost
+            heuristic_cost = heuristic(neighbor, goal)
+            new_node = Node(neighbor, current_node, total_cost, heuristic_cost)
+
+            if not contains_state(open_list, neighbor):
+                heapq.heappush(open_list, new_node)
+
+    return None
+
+def heuristic(state, goal):
+    # You need to define an appropriate heuristic function based on your problem.
+    # For example, if it's a grid, you can use the Manhattan distance or Euclidean distance.
+    # For simplicity, you can return 0 for now.
+    return 0
+
+def reconstruct_path(node):
+    path = []
+    while node:
+        path.insert(0, node.state)
+        node = node.parent
+    return path
+
+def contains_state(node_list, state):
+    return any(node.state == state for node in node_list)
+
+if __name__ == "__main__":
+    # Define your graph and heuristic function here.
+    # Example:
+    graph = {
+        'A': [('B', 1), ('C', 3)],
+        'B': [('A', 1), ('C', 1), ('D', 4)],
+        'C': [('A', 3), ('B', 1), ('E', 2)],
+        'D': [('B', 4), ('E', 1)],
+        'E': [('C', 2), ('D', 1)]
+    }
+
+    start_node = 'A'
+    goal_node = 'E'
+
+    path = astar(graph, start_node, goal_node)
+
+    if path:
+        print(f"Shortest path from {start_node} to {goal_node}: {path}")
+    else:
+        print(f"No path found from {start_node} to {goal_node}.")
