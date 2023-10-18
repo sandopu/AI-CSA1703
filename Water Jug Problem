@@ -1,0 +1,41 @@
+def water_jug_problem(x, y, target):
+    if target > max(x, y):
+        return "Target value cannot be greater than the capacity of the larger jug."
+
+    jug1 = 0
+    jug2 = 0
+
+    while jug1 != target and jug2 != target:
+        if jug1 == 0:
+            jug1 = x
+            print(f"Fill jug 1: {jug1}L")
+        elif jug1 > 0 and jug2 < y:
+            transfer_amount = min(jug1, y - jug2)
+            jug1 -= transfer_amount
+            jug2 += transfer_amount
+            print(f"Pour water from jug 1 to jug 2: {transfer_amount}L")
+        elif jug2 == y:
+            jug2 = 0
+            print("Empty jug 2")
+        elif jug1 > 0 and jug2 == 0:
+            jug1 = 0
+            print("Empty jug 1")
+
+        if jug1 == target or jug2 == target:
+            break
+
+    if jug1 == target:
+        print(f"\nTarget of {target}L achieved in jug 1.")
+    else:
+        print(f"\nTarget of {target}L achieved in jug 2.")
+
+
+if __name__ == "__main__":
+    print("Enter the capacity of jug 1:")
+    jug1_capacity = int(input())
+    print("Enter the capacity of jug 2:")
+    jug2_capacity = int(input())
+    print("Enter the target value:")
+    target_value = int(input())
+
+    water_jug_problem(jug1_capacity, jug2_capacity, target_value)
